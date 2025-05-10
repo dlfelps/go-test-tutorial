@@ -1,0 +1,40 @@
+modules = ["go"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "GoTestTutorial"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "go_test_tutorial"
+
+[[workflows.workflow]]
+name = "GoTestTutorial"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "go run main.go"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "go_test_tutorial"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "go mod init go-test-tutorial && go get github.com/spf13/cobra && go build -o gotest-learn && ./gotest-learn"
+
+[deployment]
+run = ["sh", "-c", "go run main.go"]
