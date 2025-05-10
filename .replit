@@ -25,8 +25,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "go run main.go"
-waitForPort = 5000
+args = "go mod init go-test-tutorial && go get github.com/spf13/cobra && go build -o gotest-learn && ./gotest-learn"
 
 [[workflows.workflow]]
 name = "go_test_tutorial"
@@ -37,4 +36,4 @@ task = "shell.exec"
 args = "go mod init go-test-tutorial && go get github.com/spf13/cobra && go build -o gotest-learn && ./gotest-learn"
 
 [deployment]
-run = ["sh", "-c", "go run main.go"]
+run = ["sh", "-c", "go mod init go-test-tutorial && go get github.com/spf13/cobra && go build -o gotest-learn && ./gotest-learn"]
