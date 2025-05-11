@@ -96,7 +96,7 @@ This project uses GitHub Actions for continuous integration and delivery:
 - Builds and tests the code with Go 1.19
 - Runs unit tests, benchmarks, and static code analysis
 - Generates test coverage reports
-- Checks for race conditions and proper formatting
+- Checks for race conditions
 - Builds cross-platform binaries for Linux, Windows, and macOS
 - Prepares releases for tagged versions
 

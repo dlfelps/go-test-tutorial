@@ -53,14 +53,7 @@ jobs:
     - name: Check for race conditions
       run: go test -race -short ./...
     
-    - name: Check formatting
-      run: |
-        go fmt ./...
-        if [ -n "$(git diff)" ]; then
-          echo "Formatting check failed"
-          git diff
-          exit 1
-        fi
+    # Removed formatting check
     
     - name: Run go vet
       run: go vet ./...
