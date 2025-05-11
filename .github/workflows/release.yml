@@ -64,17 +64,14 @@ jobs:
         cat release_notes.md >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
     
-    - name: Create GitHub Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        name: Go Test Tutorial ${{ github.ref_name }}
-        body: ${{ env.RELEASE_NOTES }}
-        draft: false
-        prerelease: false
-        files: |
-          gotest-learn-linux-amd64.zip
-          gotest-learn-windows-amd64.zip
-          gotest-learn-darwin-amd64.zip
-        token: ${{ secrets.GITHUB_TOKEN }}
+    # Manual release creation
+    - name: Create release directory
+      run: |
+        mkdir -p release
+        cp gotest-learn-linux-amd64.zip release/
+        cp gotest-learn-windows-amd64.zip release/
+        cp gotest-learn-darwin-amd64.zip release/
+        cp release_notes.md release/
+    
+    - name: Display release files
+      run: ls -la release/

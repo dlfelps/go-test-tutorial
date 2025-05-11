@@ -38,14 +38,11 @@ jobs:
         go build -v -ldflags "-X 'go-test-tutorial/cmd.Version=v1.0.0' -X 'go-test-tutorial/cmd.BuildDate=$BUILD_DATE' -X 'go-test-tutorial/cmd.GitCommit=$GIT_COMMIT'" -o gotest-learn
     
     - name: Run tests with coverage
-      run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
-      
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        file: ./coverage.out
-        flags: unittests
-        fail_ci_if_error: false
+      run: |
+        go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+        
+        # Generate coverage summary instead of using external service
+        go tool cover -func=coverage.out
     
     - name: Run examples tests
       run: cd examples/calc && go test -v ./...
@@ -75,12 +72,9 @@ jobs:
         install-go: false
         cache-key: "go-1.19"
     
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: gotest-learn
-        path: gotest-learn
-        retention-days: 5
+    # Skip artifact upload for now
+    - name: Archive build
+      run: tar -czf gotest-learn.tar.gz gotest-learn
 
   release:
     name: Release Build
@@ -116,12 +110,11 @@ jobs:
         # Build for macOS
         GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-darwin-amd64
     
-    - name: Upload builds as artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: gotest-learn-binaries
-        path: |
-          gotest-learn-linux-amd64
-          gotest-learn-windows-amd64.exe
-          gotest-learn-darwin-amd64
-        retention-days: 30
+    # Archive builds instead of using upload-artifact action
+    - name: Archive builds for release
+      run: |
+        mkdir -p release-builds
+        cp gotest-learn-linux-amd64 release-builds/
+        cp gotest-learn-windows-amd64.exe release-builds/
+        cp gotest-learn-darwin-amd64 release-builds/
+        tar -czf gotest-learn-release-builds.tar.gz release-builds/

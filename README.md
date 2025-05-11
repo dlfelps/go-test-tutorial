@@ -1,7 +1,6 @@
 # Go Test Tutorial CLI Tool
 
 [![Go Test Tutorial CI](https://github.com/yourusername/go-test-tutorial/actions/workflows/go.yml/badge.svg)](https://github.com/yourusername/go-test-tutorial/actions/workflows/go.yml)
-[![codecov](https://codecov.io/gh/yourusername/go-test-tutorial/branch/main-new/graph/badge.svg)](https://codecov.io/gh/yourusername/go-test-tutorial)
 
 A command-line educational tool for teaching beginners how to use Go's testing framework through interactive tutorials and examples.
 
@@ -94,11 +93,12 @@ The `examples` directory contains practical examples of Go testing techniques:
 
 This project uses GitHub Actions for continuous integration and delivery:
 
-- Builds and tests the code on multiple Go versions (1.17 to 1.20)
+- Builds and tests the code with Go 1.19
 - Runs unit tests, benchmarks, and static code analysis
+- Generates test coverage reports
 - Checks for race conditions and proper formatting
 - Builds cross-platform binaries for Linux, Windows, and macOS
-- Automatically creates releases when new tags are pushed
+- Prepares releases for tagged versions
 
 You can see the current build status at the top of this README.
 
