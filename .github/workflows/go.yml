@@ -11,18 +11,14 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        go-version: ['1.17', '1.18', '1.19', '1.20']
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    - name: Set up Go ${{ matrix.go-version }}
+    - name: Set up Go 1.19
       uses: actions/setup-go@v4
       with:
-        go-version: ${{ matrix.go-version }}
+        go-version: '1.19'
         cache: true
     
     - name: Install dependencies
@@ -36,9 +32,10 @@ jobs:
         # Set build date and git commit hash
         BUILD_DATE=$(date -u +"%Y-%m-%d")
         GIT_COMMIT=$(git rev-parse --short HEAD)
+        VERSION=$(grep -m 1 "go " go.mod | cut -d ' ' -f 2)
         
         # Pass version information to the build
-        go build -v -ldflags "-X 'go-test-tutorial/cmd.Version=${{ matrix.go-version }}' -X 'go-test-tutorial/cmd.BuildDate=$BUILD_DATE' -X 'go-test-tutorial/cmd.GitCommit=$GIT_COMMIT'" -o gotest-learn
+        go build -v -ldflags "-X 'go-test-tutorial/cmd.Version=v1.0.0' -X 'go-test-tutorial/cmd.BuildDate=$BUILD_DATE' -X 'go-test-tutorial/cmd.GitCommit=$GIT_COMMIT'" -o gotest-learn
     
     - name: Run tests with coverage
       run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
@@ -76,12 +73,12 @@ jobs:
       with:
         version: "latest"
         install-go: false
-        cache-key: ${{ matrix.go-version }}
+        cache-key: "go-1.19"
     
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: gotest-learn-${{ matrix.go-version }}
+        name: gotest-learn
         path: gotest-learn
         retention-days: 5
 
@@ -95,40 +92,36 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    - name: Set up Go
+    - name: Set up Go 1.19
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.19'
         cache: true
     
     - name: Build for multiple platforms
       run: |
+        # Set build date and git commit hash
+        BUILD_DATE=$(date -u +"%Y-%m-%d")
+        GIT_COMMIT=$(git rev-parse --short HEAD)
+        
+        # Common build flags
+        LDFLAGS="-X 'go-test-tutorial/cmd.Version=v1.0.0' -X 'go-test-tutorial/cmd.BuildDate=$BUILD_DATE' -X 'go-test-tutorial/cmd.GitCommit=$GIT_COMMIT'"
+        
         # Build for Linux
-        GOOS=linux GOARCH=amd64 go build -o gotest-learn-linux-amd64
+        GOOS=linux GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-linux-amd64
         
         # Build for Windows
-        GOOS=windows GOARCH=amd64 go build -o gotest-learn-windows-amd64.exe
+        GOOS=windows GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-windows-amd64.exe
         
         # Build for macOS
-        GOOS=darwin GOARCH=amd64 go build -o gotest-learn-darwin-amd64
+        GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-darwin-amd64
     
-    - name: Upload Linux build
+    - name: Upload builds as artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: gotest-learn-linux
-        path: gotest-learn-linux-amd64
-        retention-days: 30
-    
-    - name: Upload Windows build
-      uses: actions/upload-artifact@v3
-      with:
-        name: gotest-learn-windows
-        path: gotest-learn-windows-amd64.exe
-        retention-days: 30
-    
-    - name: Upload macOS build
-      uses: actions/upload-artifact@v3
-      with:
-        name: gotest-learn-macos
-        path: gotest-learn-darwin-amd64
+        name: gotest-learn-binaries
+        path: |
+          gotest-learn-linux-amd64
+          gotest-learn-windows-amd64.exe
+          gotest-learn-darwin-amd64
         retention-days: 30
