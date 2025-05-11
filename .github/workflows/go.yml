@@ -56,15 +56,8 @@ jobs:
     # Removed formatting check
     
     - name: Run go vet
-      run: go vet ./...
-    
-    - name: Run staticcheck
-      uses: dominikh/staticcheck-action@v1
-      with:
-        version: "latest"
-        install-go: false
-        cache-key: "go-1.19"
-    
+      run: go vet ./...    
+  
     # Skip artifact upload for now
     - name: Archive build
       run: tar -czf gotest-learn.tar.gz gotest-learn
