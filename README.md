@@ -1,7 +1,7 @@
 # Go Test Tutorial CLI Tool
 
 [![Go Test Tutorial CI](https://github.com/yourusername/go-test-tutorial/actions/workflows/go.yml/badge.svg)](https://github.com/yourusername/go-test-tutorial/actions/workflows/go.yml)
-[![codecov](https://codecov.io/gh/yourusername/go-test-tutorial/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/go-test-tutorial)
+[![codecov](https://codecov.io/gh/yourusername/go-test-tutorial/branch/main-new/graph/badge.svg)](https://codecov.io/gh/yourusername/go-test-tutorial)
 
 A command-line educational tool for teaching beginners how to use Go's testing framework through interactive tutorials and examples.
 

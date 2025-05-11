@@ -2,9 +2,9 @@ name: Go Test Tutorial CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main-new, main, master ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main-new, main, master ]
 
 jobs:
   build:
@@ -89,7 +89,7 @@ jobs:
     name: Release Build
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main-new' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     
     steps:
     - name: Checkout code
