@@ -13,19 +13,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "GoTestTutorial"
+args = "go_test_tutorial"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "go_test_tutorial"
-
-[[workflows.workflow]]
-name = "GoTestTutorial"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "go mod init go-test-tutorial && go get github.com/spf13/cobra && go build -o gotest-learn && ./gotest-learn"
+args = "GoTestTutorial"
 
 [[workflows.workflow]]
 name = "go_test_tutorial"
@@ -34,6 +26,14 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "go mod init go-test-tutorial && go get github.com/spf13/cobra && go build -o gotest-learn && ./gotest-learn"
+
+[[workflows.workflow]]
+name = "GoTestTutorial"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "go build -o gotest-learn"
 
 [deployment]
 run = ["sh", "-c", "go mod init go-test-tutorial && go get github.com/spf13/cobra && go build -o gotest-learn && ./gotest-learn"]
