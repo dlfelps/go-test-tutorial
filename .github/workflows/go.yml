@@ -1,0 +1,134 @@
+name: Go Test Tutorial CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        go-version: ['1.17', '1.18', '1.19', '1.20']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.go-version }}
+        cache: true
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Verify dependencies
+      run: go mod verify
+    
+    - name: Build
+      run: |
+        # Set build date and git commit hash
+        BUILD_DATE=$(date -u +"%Y-%m-%d")
+        GIT_COMMIT=$(git rev-parse --short HEAD)
+        
+        # Pass version information to the build
+        go build -v -ldflags "-X 'go-test-tutorial/cmd.Version=${{ matrix.go-version }}' -X 'go-test-tutorial/cmd.BuildDate=$BUILD_DATE' -X 'go-test-tutorial/cmd.GitCommit=$GIT_COMMIT'" -o gotest-learn
+    
+    - name: Run tests with coverage
+      run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.out
+        flags: unittests
+        fail_ci_if_error: false
+    
+    - name: Run examples tests
+      run: cd examples/calc && go test -v ./...
+    
+    - name: Run benchmarks
+      run: cd examples/calc && go test -bench=. -benchmem
+    
+    - name: Check for race conditions
+      run: go test -race -short ./...
+    
+    - name: Check formatting
+      run: |
+        go fmt ./...
+        if [ -n "$(git diff)" ]; then
+          echo "Formatting check failed"
+          git diff
+          exit 1
+        fi
+    
+    - name: Run go vet
+      run: go vet ./...
+    
+    - name: Run staticcheck
+      uses: dominikh/staticcheck-action@v1
+      with:
+        version: "latest"
+        install-go: false
+        cache-key: ${{ matrix.go-version }}
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: gotest-learn-${{ matrix.go-version }}
+        path: gotest-learn
+        retention-days: 5
+
+  release:
+    name: Release Build
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+        cache: true
+    
+    - name: Build for multiple platforms
+      run: |
+        # Build for Linux
+        GOOS=linux GOARCH=amd64 go build -o gotest-learn-linux-amd64
+        
+        # Build for Windows
+        GOOS=windows GOARCH=amd64 go build -o gotest-learn-windows-amd64.exe
+        
+        # Build for macOS
+        GOOS=darwin GOARCH=amd64 go build -o gotest-learn-darwin-amd64
+    
+    - name: Upload Linux build
+      uses: actions/upload-artifact@v3
+      with:
+        name: gotest-learn-linux
+        path: gotest-learn-linux-amd64
+        retention-days: 30
+    
+    - name: Upload Windows build
+      uses: actions/upload-artifact@v3
+      with:
+        name: gotest-learn-windows
+        path: gotest-learn-windows-amd64.exe
+        retention-days: 30
+    
+    - name: Upload macOS build
+      uses: actions/upload-artifact@v3
+      with:
+        name: gotest-learn-macos
+        path: gotest-learn-darwin-amd64
+        retention-days: 30

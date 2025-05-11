@@ -1,5 +1,8 @@
 # Go Test Tutorial CLI Tool
 
+[![Go Test Tutorial CI](https://github.com/yourusername/go-test-tutorial/actions/workflows/go.yml/badge.svg)](https://github.com/yourusername/go-test-tutorial/actions/workflows/go.yml)
+[![codecov](https://codecov.io/gh/yourusername/go-test-tutorial/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/go-test-tutorial)
+
 A command-line educational tool for teaching beginners how to use Go's testing framework through interactive tutorials and examples.
 
 ## Features
@@ -87,9 +90,44 @@ The `examples` directory contains practical examples of Go testing techniques:
 7. TestMain and Setup/Teardown
 8. Test Helpers and Utilities
 
+## Continuous Integration and Releases
+
+This project uses GitHub Actions for continuous integration and delivery:
+
+- Builds and tests the code on multiple Go versions (1.17 to 1.20)
+- Runs unit tests, benchmarks, and static code analysis
+- Checks for race conditions and proper formatting
+- Builds cross-platform binaries for Linux, Windows, and macOS
+- Automatically creates releases when new tags are pushed
+
+You can see the current build status at the top of this README.
+
+### Release Process
+
+To create a new release:
+
+1. Update version in code if applicable
+2. Tag the commit: `git tag -a v1.0.0 -m "Release v1.0.0"`
+3. Push the tag: `git push origin v1.0.0`
+
+GitHub Actions will automatically build binaries and create a release with the following assets:
+- Linux (64-bit) executable
+- Windows (64-bit) executable
+- macOS (64-bit) executable
+
 ## Contributing
 
 Contributions are welcome! Feel free to submit pull requests or open issues for improvements or bug fixes.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-new-feature`
+3. Make your changes and add tests
+4. Run tests locally: `go test ./...`
+5. Commit your changes: `git commit -am 'Add some feature'`
+6. Push to the branch: `git push origin feature/my-new-feature`
+7. Create a new Pull Request
 
 ## License
 

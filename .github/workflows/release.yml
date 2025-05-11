@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+    
+    - name: Run tests
+      run: go test -v ./...
+    
+    - name: Build for multiple platforms
+      run: |
+        # Set version from tag
+        VERSION=${GITHUB_REF#refs/tags/v}
+        BUILD_DATE=$(date -u +"%Y-%m-%d")
+        GIT_COMMIT=$(git rev-parse --short HEAD)
+        
+        # Common build flags
+        LDFLAGS="-X 'go-test-tutorial/cmd.Version=$VERSION' -X 'go-test-tutorial/cmd.BuildDate=$BUILD_DATE' -X 'go-test-tutorial/cmd.GitCommit=$GIT_COMMIT'"
+        
+        # Build for Linux
+        GOOS=linux GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-linux-amd64
+        
+        # Build for Windows
+        GOOS=windows GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-windows-amd64.exe
+        
+        # Build for macOS
+        GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-darwin-amd64
+        
+        # Create zip files for each platform
+        zip -r gotest-learn-linux-amd64.zip gotest-learn-linux-amd64
+        zip -r gotest-learn-windows-amd64.zip gotest-learn-windows-amd64.exe
+        zip -r gotest-learn-darwin-amd64.zip gotest-learn-darwin-amd64
+    
+    - name: Extract release notes
+      id: extract_release_notes
+      run: |
+        # Create a release notes file
+        echo "# Go Test Tutorial CLI Tool ${GITHUB_REF#refs/tags/}" > release_notes.md
+        echo "" >> release_notes.md
+        echo "## Changes" >> release_notes.md
+        
+        # Get commits since last tag
+        git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"* %s" >> release_notes.md
+        
+        # Set release notes as output
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+        cat release_notes.md >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+    
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Go Test Tutorial ${{ github.ref_name }}
+        body: ${{ env.RELEASE_NOTES }}
+        draft: false
+        prerelease: false
+        files: |
+          gotest-learn-linux-amd64.zip
+          gotest-learn-windows-amd64.zip
+          gotest-learn-darwin-amd64.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
