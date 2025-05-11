@@ -41,7 +41,7 @@ jobs:
       run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
       
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v1
       with:
         file: ./coverage.out
         flags: unittests
@@ -76,7 +76,7 @@ jobs:
         cache-key: "go-1.19"
     
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: gotest-learn
         path: gotest-learn
@@ -117,7 +117,7 @@ jobs:
         GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o gotest-learn-darwin-amd64
     
     - name: Upload builds as artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: gotest-learn-binaries
         path: |
