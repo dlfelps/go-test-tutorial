@@ -2,9 +2,9 @@ package tutorial
 
 // Concept represents a Go testing concept with explanation and examples
 type Concept struct {
-	Title            string
-	Description      string
-	Example          string
+	Title             string
+	Description       string
+	Example           string
 	PracticalExercise string
 }
 

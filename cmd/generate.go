@@ -26,12 +26,12 @@ You can choose from various templates like basic test, table-driven test, etc.`,
 			listTemplates()
 			return
 		}
-		
+
 		if fileName == "" {
 			fmt.Println("Error: Please provide a file name using the --file flag")
 			return
 		}
-		
+
 		generateTestFile()
 	},
 }
@@ -58,20 +58,20 @@ func generateTestFile() {
 		listTemplates()
 		return
 	}
-	
+
 	// Create output directory if it doesn't exist
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		fmt.Printf("Error creating output directory: %v\n", err)
 		return
 	}
-	
+
 	// Clean up the filename
 	fileName = strings.TrimSuffix(fileName, ".go")
 	fileName = strings.TrimSuffix(fileName, "_test")
-	
+
 	// Prepare output file path
 	outputFile := filepath.Join(outputDir, fileName+"_test.go")
-	
+
 	// Check if file already exists
 	if _, err := os.Stat(outputFile); err == nil {
 		fmt.Printf("File '%s' already exists. Overwrite? (y/N): ", outputFile)
@@ -82,11 +82,11 @@ func generateTestFile() {
 			return
 		}
 	}
-	
+
 	// Try to read the source file to get package name and function names
 	sourceFile := filepath.Join(outputDir, fileName+".go")
 	packageName := "main" // default
-	
+
 	sourceExists := false
 	if _, err := os.Stat(sourceFile); err == nil {
 		sourceExists = true
@@ -99,22 +99,22 @@ func generateTestFile() {
 			}
 		}
 	}
-	
+
 	// Generate the content
 	content := template.GetContent(packageName, fileName)
-	
+
 	// Write the file
 	if err := utils.WriteFile(outputFile, content); err != nil {
 		fmt.Printf("Error writing to file: %v\n", err)
 		return
 	}
-	
+
 	fmt.Printf("Successfully generated test file: %s\n", outputFile)
-	
+
 	if !sourceExists {
 		fmt.Printf("\nNotice: Source file '%s' not found. You might want to create it first.\n", sourceFile)
 	}
-	
+
 	fmt.Println("\nNext steps:")
 	fmt.Println("1. Edit the generated test file to match your actual code")
 	fmt.Println("2. Run the test with 'gotest-learn run --file " + fileName + "_test.go'")

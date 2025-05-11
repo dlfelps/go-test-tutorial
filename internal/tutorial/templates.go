@@ -1,56 +1,56 @@
 package tutorial
 
 import (
-        "strings"
+	"strings"
 )
 
 // Template represents a test template that can be generated
 type Template struct {
-        Name        string
-        Description string
-        Content     string
+	Name        string
+	Description string
+	Content     string
 }
 
 // GetContent returns the template content with the package name
 // and function name substituted
 func (t *Template) GetContent(packageName, fileName string) string {
-        content := t.Content
-        
-        // Replace package name
-        content = strings.Replace(content, "{{PACKAGE}}", packageName, -1)
-        
-        // Replace function name based on the file name
-        funcName := strings.Title(strings.TrimSuffix(fileName, ".go"))
-        content = strings.Replace(content, "{{FUNCTION}}", funcName, -1)
-        
-        return content
+	content := t.Content
+
+	// Replace package name
+	content = strings.Replace(content, "{{PACKAGE}}", packageName, -1)
+
+	// Replace function name based on the file name
+	funcName := strings.Title(strings.TrimSuffix(fileName, ".go"))
+	content = strings.Replace(content, "{{FUNCTION}}", funcName, -1)
+
+	return content
 }
 
 // GetAllTemplates returns all available test templates
 func GetAllTemplates() []Template {
-        return []Template{
-                getBasicTemplate(),
-                getTableDrivenTemplate(),
-                getBenchmarkTemplate(),
-                getSubtestTemplate(),
-        }
+	return []Template{
+		getBasicTemplate(),
+		getTableDrivenTemplate(),
+		getBenchmarkTemplate(),
+		getSubtestTemplate(),
+	}
 }
 
 // GetTemplateByName returns a template by its name
 func GetTemplateByName(name string) (Template, bool) {
-        for _, tmpl := range GetAllTemplates() {
-                if tmpl.Name == name {
-                        return tmpl, true
-                }
-        }
-        return Template{}, false
+	for _, tmpl := range GetAllTemplates() {
+		if tmpl.Name == name {
+			return tmpl, true
+		}
+	}
+	return Template{}, false
 }
 
 func getBasicTemplate() Template {
-        return Template{
-                Name:        "basic",
-                Description: "Basic test template for simple function testing",
-                Content: `package {{PACKAGE}}
+	return Template{
+		Name:        "basic",
+		Description: "Basic test template for simple function testing",
+		Content: `package {{PACKAGE}}
 
 import "testing"
 
@@ -68,14 +68,14 @@ func Test{{FUNCTION}}(t *testing.T) {
         }
 }
 `,
-        }
+	}
 }
 
 func getTableDrivenTemplate() Template {
-        return Template{
-                Name:        "table",
-                Description: "Table-driven test template for testing multiple cases",
-                Content: `package {{PACKAGE}}
+	return Template{
+		Name:        "table",
+		Description: "Table-driven test template for testing multiple cases",
+		Content: `package {{PACKAGE}}
 
 import "testing"
 
@@ -114,14 +114,14 @@ func Test{{FUNCTION}}(t *testing.T) {
         }
 }
 `,
-        }
+	}
 }
 
 func getBenchmarkTemplate() Template {
-        return Template{
-                Name:        "benchmark",
-                Description: "Benchmark template for measuring performance",
-                Content: `package {{PACKAGE}}
+	return Template{
+		Name:        "benchmark",
+		Description: "Benchmark template for measuring performance",
+		Content: `package {{PACKAGE}}
 
 import "testing"
 
@@ -176,14 +176,14 @@ func Benchmark{{FUNCTION}}Sizes(b *testing.B) {
         }
 }
 `,
-        }
+	}
 }
 
 func getSubtestTemplate() Template {
-        return Template{
-                Name:        "subtest",
-                Description: "Subtest template for organizing tests into groups",
-                Content: `package {{PACKAGE}}
+	return Template{
+		Name:        "subtest",
+		Description: "Subtest template for organizing tests into groups",
+		Content: `package {{PACKAGE}}
 
 import "testing"
 
@@ -250,5 +250,5 @@ func Test{{FUNCTION}}(t *testing.T) {
         })
 }
 `,
-        }
+	}
 }
